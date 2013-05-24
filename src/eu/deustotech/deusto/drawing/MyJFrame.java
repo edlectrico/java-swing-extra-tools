@@ -50,8 +50,8 @@ public class MyJFrame extends JFrame {
 		overlayImages();
 
 		image = Toolkit.getDefaultToolkit().getImage(RESULT);
-		image = resizeImage(image, new Dimension(300,
-				300), true);
+//		image = resizeImage(image, new Dimension(300,
+//				300), true);
 		imageIcon = new ImageIcon(image);
 
 		JLabel label = new JLabel("");
@@ -70,8 +70,12 @@ public class MyJFrame extends JFrame {
 	 * @param max
 	 * @return the resized image
 	 */
-	public static Image resizeImage(Image image, Dimension dimension,
+	public Image resizeImage(Image image, Dimension dimension,
 			boolean max) {
+		if (image == null){
+			image = Toolkit.getDefaultToolkit().getImage(RESULT);
+		}
+		
 		if (dimension.getWidth() < 0 && dimension.getHeight() > 0) {
 			return resizeImageBy(image, (int) dimension.getHeight(), false);
 		} else if (dimension.getWidth() > 0 && dimension.getHeight() < 0) {
@@ -101,7 +105,7 @@ public class MyJFrame extends JFrame {
 	 * @param setWidth
 	 * @return the resized image
 	 */
-	public static Image resizeImageBy(Image image, int size, boolean setWidth) {
+	private Image resizeImageBy(Image image, int size, boolean setWidth) {
 		if (setWidth) {
 			return image.getScaledInstance(size, -1, Image.SCALE_SMOOTH);
 		} else {
