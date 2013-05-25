@@ -60,25 +60,21 @@ public class MyJFrame extends JFrame {
 	 * @throws IOException
 	 */
 	public void drawImage(BufferedImage backgroundImage) throws IOException {
-		try {
-			Graphics graphics = backgroundImage.getGraphics();
-			graphics.drawImage(backgroundImage, 0, 0, null);
+		Graphics graphics = backgroundImage.getGraphics();
+		graphics.drawImage(backgroundImage, 0, 0, null);
 
-			ImageIO.write(backgroundImage, FORMAT_PNG, new File(RESULT));
-			
-			//now showing the image into the JFrame
-			Image image = Toolkit.getDefaultToolkit().getImage(RESULT);
-			ImageIcon imageIcon = new ImageIcon(image);
+		ImageIO.write(backgroundImage, FORMAT_PNG, new File(RESULT));
 
-			JLabel label = new JLabel("");
-			label.setIcon(imageIcon);
-			
-			getContentPane().add(label, BorderLayout.CENTER);
+		// now showing the image into the JFrame
+		Image image = Toolkit.getDefaultToolkit().getImage(RESULT);
+		ImageIcon imageIcon = new ImageIcon(image);
 
-			setVisible(true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		JLabel label = new JLabel("");
+		label.setIcon(imageIcon);
+
+		getContentPane().add(label, BorderLayout.CENTER);
+
+		setVisible(true);
 	}
 
 	/**
@@ -87,8 +83,10 @@ public class MyJFrame extends JFrame {
 	 * @param image
 	 * @param dimension
 	 * @param max
+	 * @throws IOException
 	 */
-	public void resizeImage(Image image, Dimension dimension, boolean max) {
+	public void resizeImage(Image image, Dimension dimension, boolean max)
+			throws IOException {
 		if (image == null) {
 			image = Toolkit.getDefaultToolkit().getImage(RESULT);
 		}
@@ -111,11 +109,7 @@ public class MyJFrame extends JFrame {
 				resizedImage, (int) dimension.getWidth(),
 				(int) dimension.getHeight());
 
-		try {
-			drawImage(bufferedResizedImage);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		drawImage(bufferedResizedImage);
 	}
 
 	/**
@@ -140,42 +134,42 @@ public class MyJFrame extends JFrame {
 	 * @param foregroundImage
 	 * @param posX
 	 * @param posY
+	 * @throws IOException
 	 */
-	public void overlayImage(BufferedImage foregroundImage, int posX, int posY) {
+	public void overlayImage(BufferedImage foregroundImage, int posX, int posY)
+			throws IOException {
 		BufferedImage backgroundImage = null;
-		try {
-			backgroundImage = ImageIO.read(new File(BACKGROUND_IMAGE));
+		backgroundImage = ImageIO.read(new File(BACKGROUND_IMAGE));
 
-			int w = Math.max(backgroundImage.getWidth(),
-					foregroundImage.getWidth());
-			int h = Math.max(backgroundImage.getHeight(),
-					foregroundImage.getHeight());
+		int w = Math
+				.max(backgroundImage.getWidth(), foregroundImage.getWidth());
+		int h = Math.max(backgroundImage.getHeight(),
+				foregroundImage.getHeight());
 
-			BufferedImage combined = new BufferedImage(w, h,
-					BufferedImage.TYPE_INT_ARGB);
+		BufferedImage combined = new BufferedImage(w, h,
+				BufferedImage.TYPE_INT_ARGB);
 
-			// paint both images, preserving the alpha channels
-			Graphics graphics = combined.getGraphics();
-			graphics.drawImage(backgroundImage, 0, 0, null);
+		// paint both images, preserving the alpha channels
+		Graphics graphics = combined.getGraphics();
+		graphics.drawImage(backgroundImage, 0, 0, null);
 
-			overlayImages(foregroundImage, graphics, posX, posY);
+		overlayImages(foregroundImage, graphics, posX, posY);
 
-			ImageIO.write(combined, FORMAT_PNG, new File(RESULT));
-			
-			final Image image = Toolkit.getDefaultToolkit().getImage(RESULT);
-			
-			final BufferedImage bufferedImage = imageToBufferedImage(image, image.getWidth(null), image.getHeight(null));
-			
-			drawImage(bufferedImage);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		ImageIO.write(combined, FORMAT_PNG, new File(RESULT));
+
+		final Image image = Toolkit.getDefaultToolkit().getImage(RESULT);
+
+		final BufferedImage bufferedImage = imageToBufferedImage(image,
+				image.getWidth(null), image.getHeight(null));
+
+		drawImage(bufferedImage);
 	}
 
-	private void overlayImages(BufferedImage foregroundImage, Graphics g, int posX, int posY) {
+	private void overlayImages(BufferedImage foregroundImage, Graphics g,
+			int posX, int posY) {
 		g.drawImage(foregroundImage, posX, posY, null);
 	}
-	
+
 	/**
 	 * Converts a Image object into a BufferedImage object
 	 * 
@@ -206,8 +200,10 @@ public class MyJFrame extends JFrame {
 	 * @param src
 	 * @param text
 	 * @return A BufferedImage with a text over it
+	 * @throws IOException
 	 */
-	private BufferedImage addTextToBufferedImage(BufferedImage src, String text) {
+	public void drawTextOverImage(BufferedImage src, String text)
+			throws IOException {
 		int w = src.getWidth();
 		int h = src.getHeight();
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -222,7 +218,8 @@ public class MyJFrame extends JFrame {
 
 		g2d.drawString(text, x, y);
 		g2d.dispose();
-		return img;
+
+		drawImage(img);
 	}
 
 }

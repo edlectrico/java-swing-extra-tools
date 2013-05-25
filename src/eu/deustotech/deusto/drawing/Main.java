@@ -34,10 +34,12 @@ public class Main extends JFrame {
 			
 			//3. overlay images
 			frame.overlayImage(foregroundImage, 500, 500);
+			
+			//4. draw text over image
+//			frame.drawTextOverImage(bufferedImage, "Text");
 		}
 		
 		//TODO:
-		//4. draw test over image
 		//5. change image colors
 		
 	}
