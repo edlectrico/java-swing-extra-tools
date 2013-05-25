@@ -26,7 +26,7 @@ public class MyJFrame extends JFrame {
 	 * default generated ID
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final String BACKGROUND_IMAGE = "img/plan.png"; // Background
 	private static final String FOREGROUND_IMAGE = "img/circle.png"; // Foreground
 	private static final String RESULT = "img/result.png"; // Result image file
@@ -35,62 +35,65 @@ public class MyJFrame extends JFrame {
 	private Image image;
 	private ImageIcon imageIcon;
 
-	
 	/**
-	 * Constructor. It creates a JFrame with an Image on it taking into
-	 * account the fullscreen and visible parameters.
+	 * Constructor. It creates a JFrame with an Image on it taking into account
+	 * the fullscreen and undecorated parameters.
 	 * 
 	 * @param fullscreen
-	 * @param visible
-	 * @throws IOException 
+	 * @param undecorated
+	 * @throws IOException
 	 */
-	public MyJFrame(boolean fullscreen, boolean visible) {
+	public MyJFrame(boolean fullscreen, boolean undecorated) {
 		super("@Test");
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		setUndecorated(true);
+		setUndecorated(undecorated);
 
 		if (fullscreen) {
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			setBounds(0, 0, screenSize.width, screenSize.height);
 		}
 
-//		try {
-//			drawBackgroundImage(ImageIO.read(new File(BACKGROUND_IMAGE)));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-//		overlayImages();
+		// overlayImages();
 
-		image = Toolkit.getDefaultToolkit().getImage(RESULT);
-//		image = resizeImage(image, new Dimension(300,
-//				300), true);
-		imageIcon = new ImageIcon(image);
-
-		JLabel label = new JLabel("");
-		label.setIcon(imageIcon);
+//		image = Toolkit.getDefaultToolkit().getImage(RESULT);
+//		// image = resizeImage(image, new Dimension(300,
+//		// 300), true);
+//		imageIcon = new ImageIcon(image);
 //
-		getContentPane().add(label, BorderLayout.CENTER);
-
-		this.setVisible(visible);
+//		JLabel label = new JLabel("");
+//		label.setIcon(imageIcon);
+//		//
+//		getContentPane().add(label, BorderLayout.CENTER);
+//
+//		this.setVisible(visible);
 	}
 
 	/**
-	 * Given a BufferdImage this method draws it over this JFrame and
-	 * generates a result.png file
+	 * Given a BufferdImage this method draws it over this JFrame and generates
+	 * a result.png file
 	 * 
 	 * @param backgroundImage
 	 * @throws IOException
 	 */
-	public void drawBackgroundImage(BufferedImage backgroundImage) throws IOException {
+	public void drawImage(BufferedImage backgroundImage) throws IOException {
 		try {
-			// paint both images, preserving the alpha channels
 			Graphics graphics = backgroundImage.getGraphics();
 			graphics.drawImage(backgroundImage, 0, 0, null);
 
 			ImageIO.write(backgroundImage, FORMAT_PNG, new File(RESULT));
+			
+			//now showing the image into the JFrame
+			Image image = Toolkit.getDefaultToolkit().getImage(RESULT);
+			ImageIcon imageIcon = new ImageIcon(image);
+
+			JLabel label = new JLabel("");
+			label.setIcon(imageIcon);
+			
+			getContentPane().add(label, BorderLayout.CENTER);
+
+			setVisible(true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -104,19 +107,18 @@ public class MyJFrame extends JFrame {
 	 * @param max
 	 * @return the resized image
 	 */
-	public Image resizeImage(Image image, Dimension dimension,
-			boolean max) {
-		if (image == null){
+	public void resizeImage(Image image, Dimension dimension, boolean max) {
+		if (image == null) {
 			image = Toolkit.getDefaultToolkit().getImage(RESULT);
 		}
-		
-		if (dimension.getWidth() < 0 && dimension.getHeight() > 0) {
-			return resizeImageBy(image, (int) dimension.getHeight(), false);
-		} else if (dimension.getWidth() > 0 && dimension.getHeight() < 0) {
-			return resizeImageBy(image, (int) dimension.getWidth(), true);
-		} else if (dimension.getWidth() < 0 && dimension.getHeight() < 0) {
-			return image;
-		}
+
+//		if (dimension.getWidth() < 0 && dimension.getHeight() > 0) {
+//			return resizeImageBy(image, (int) dimension.getHeight(), false);
+//		} else if (dimension.getWidth() > 0 && dimension.getHeight() < 0) {
+//			return resizeImageBy(image, (int) dimension.getWidth(), true);
+//		} else if (dimension.getWidth() < 0 && dimension.getHeight() < 0) {
+//			return image;
+//		}
 		int currentHeight = image.getHeight(null);
 		int currentWidth = image.getWidth(null);
 		int expectedWidth = (int) (dimension.getHeight() * currentWidth)
@@ -128,7 +130,19 @@ public class MyJFrame extends JFrame {
 		} else if (!max && expectedWidth < dimension.getWidth()) {
 			size = (int) dimension.getWidth();
 		}
-		return resizeImageBy(image, size, (size == dimension.getWidth()));
+		final Image resizedImage = resizeImageBy(image, size,
+				(size == dimension.getWidth()));
+
+		final BufferedImage bufferedResizedImage = imageToBufferedImage(
+				resizedImage, (int) dimension.getWidth(),
+				(int) dimension.getHeight());
+
+		try {
+			drawImage(bufferedResizedImage);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -176,8 +190,7 @@ public class MyJFrame extends JFrame {
 			Graphics graphics = combined.getGraphics();
 			graphics.drawImage(backgroundImage, 0, 0, null);
 
-			overlayImages(foregroundImage, graphics);
-			
+//			overlayImages(foregroundImage, graphics);
 
 			ImageIO.write(combined, FORMAT_PNG, new File(RESULT));
 		} catch (IOException e) {
@@ -197,6 +210,7 @@ public class MyJFrame extends JFrame {
 	 * @param locationFeature
 	 *            (ACCURACY | PROBABILITY)
 	 */
+	/*
 	private void overlayImages(BufferedImage foregroundImage, Graphics g) {
 		Image resizedForegroundImage = null;
 
@@ -212,7 +226,7 @@ public class MyJFrame extends JFrame {
 				filteredImage, "TEXT");
 		g.drawImage(filteredWithTextImage, 500, 500, null);
 	}
-
+*/
 	/**
 	 * Converts a Image object into a BufferedImage object
 	 * 
