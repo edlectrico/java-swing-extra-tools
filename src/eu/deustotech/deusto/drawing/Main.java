@@ -1,16 +1,12 @@
 package eu.deustotech.deusto.drawing;
 
-import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 public class Main extends JFrame {
 	
@@ -20,40 +16,29 @@ public class Main extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private static final String BACKGROUND_IMAGE = "img/plan.png"; // Background
-	private static final String RESULT = "img/result.png"; // Result image file
+	private static final String FOREGROUND_IMAGE = "img/circle.png"; // Foreground
 	
 	public static void main(String[] args) throws IOException {
 		MyJFrame frame = new MyJFrame(true, true);
 		
 		BufferedImage bufferedImage = ImageIO.read(new File(BACKGROUND_IMAGE));
+		BufferedImage foregroundImage = ImageIO.read(new File(FOREGROUND_IMAGE));
 		
+		//Leave uncommented just the method you want to test.
 		if (bufferedImage != null){
 			//1. Show a image in a frame
 			frame.drawImage(bufferedImage);
 			
-//			Image image = Toolkit.getDefaultToolkit().getImage(RESULT);
-//			ImageIcon imageIcon = new ImageIcon(image);
-//
-//			JLabel label = new JLabel("");
-//			label.setIcon(imageIcon);
-//			//
-//			frame.getContentPane().add(label, BorderLayout.CENTER);
-//
-//			frame.setVisible(true);
-			
-			
-			
 			//2. resize image
-//			frame.resizeImage(bufferedImage, new Dimension(300, 300), true);
+			frame.resizeImage(bufferedImage, new Dimension(300, 300), true);
 			
-			
+			//3. overlay images
+			frame.overlayImage(foregroundImage, 500, 500);
 		}
 		
 		//TODO:
-		//4. overlay images
-		//5. Change colors
-		
-//		frame.resizeImage(null, new Dimension(300, 300), true);
+		//4. draw test over image
+		//5. change image colors
 		
 	}
 }

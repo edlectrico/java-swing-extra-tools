@@ -28,12 +28,8 @@ public class MyJFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private static final String BACKGROUND_IMAGE = "img/plan.png"; // Background
-	private static final String FOREGROUND_IMAGE = "img/circle.png"; // Foreground
 	private static final String RESULT = "img/result.png"; // Result image file
 	private static final String FORMAT_PNG = "PNG";
-
-	private Image image;
-	private ImageIcon imageIcon;
 
 	/**
 	 * Constructor. It creates a JFrame with an Image on it taking into account
@@ -54,20 +50,6 @@ public class MyJFrame extends JFrame {
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			setBounds(0, 0, screenSize.width, screenSize.height);
 		}
-
-		// overlayImages();
-
-//		image = Toolkit.getDefaultToolkit().getImage(RESULT);
-//		// image = resizeImage(image, new Dimension(300,
-//		// 300), true);
-//		imageIcon = new ImageIcon(image);
-//
-//		JLabel label = new JLabel("");
-//		label.setIcon(imageIcon);
-//		//
-//		getContentPane().add(label, BorderLayout.CENTER);
-//
-//		this.setVisible(visible);
 	}
 
 	/**
@@ -105,20 +87,12 @@ public class MyJFrame extends JFrame {
 	 * @param image
 	 * @param dimension
 	 * @param max
-	 * @return the resized image
 	 */
 	public void resizeImage(Image image, Dimension dimension, boolean max) {
 		if (image == null) {
 			image = Toolkit.getDefaultToolkit().getImage(RESULT);
 		}
 
-//		if (dimension.getWidth() < 0 && dimension.getHeight() > 0) {
-//			return resizeImageBy(image, (int) dimension.getHeight(), false);
-//		} else if (dimension.getWidth() > 0 && dimension.getHeight() < 0) {
-//			return resizeImageBy(image, (int) dimension.getWidth(), true);
-//		} else if (dimension.getWidth() < 0 && dimension.getHeight() < 0) {
-//			return image;
-//		}
 		int currentHeight = image.getHeight(null);
 		int currentWidth = image.getWidth(null);
 		int expectedWidth = (int) (dimension.getHeight() * currentWidth)
@@ -142,7 +116,6 @@ public class MyJFrame extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -162,21 +135,16 @@ public class MyJFrame extends JFrame {
 	}
 
 	/**
-	 * Overlays several images over a background image
+	 * Overlays the BufferedImage received by parameter over a background image
 	 * 
-	 * @param positions
-	 *            where foreground images will be drawn
-	 * @param colorFilters
-	 *            several filters to be applied to the foreground images
+	 * @param foregroundImage
+	 * @param posX
+	 * @param posY
 	 */
-	public void overlayImages() {
+	public void overlayImage(BufferedImage foregroundImage, int posX, int posY) {
 		BufferedImage backgroundImage = null;
 		try {
 			backgroundImage = ImageIO.read(new File(BACKGROUND_IMAGE));
-
-			BufferedImage foregroundImage = null;
-
-			foregroundImage = ImageIO.read(new File(FOREGROUND_IMAGE));
 
 			int w = Math.max(backgroundImage.getWidth(),
 					foregroundImage.getWidth());
@@ -190,49 +158,31 @@ public class MyJFrame extends JFrame {
 			Graphics graphics = combined.getGraphics();
 			graphics.drawImage(backgroundImage, 0, 0, null);
 
-//			overlayImages(foregroundImage, graphics);
+			overlayImages(foregroundImage, graphics, posX, posY);
 
 			ImageIO.write(combined, FORMAT_PNG, new File(RESULT));
+			
+			final Image image = Toolkit.getDefaultToolkit().getImage(RESULT);
+			
+			final BufferedImage bufferedImage = imageToBufferedImage(image, image.getWidth(null), image.getHeight(null));
+			
+			drawImage(bufferedImage);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * Draws a circle taking into account the probability/accuracy of each
-	 * position to calculate its radius (width, height)
-	 * 
-	 * @param locations
-	 * @param foregroundImage
-	 * @param Graphics
-	 *            g
-	 * @param int i (position in the HashMap)
-	 * @param locationFeature
-	 *            (ACCURACY | PROBABILITY)
-	 */
-	/*
-	private void overlayImages(BufferedImage foregroundImage, Graphics g) {
-		Image resizedForegroundImage = null;
-
-		int width = 350;
-		int height = 350;
-
-		resizedForegroundImage = resizeImage(Toolkit.getDefaultToolkit()
-				.getImage(FOREGROUND_IMAGE), new Dimension(width, height), true);
-
-		BufferedImage filteredImage = imageToBufferedImage(
-				resizedForegroundImage, width, height);
-		BufferedImage filteredWithTextImage = addTextToBufferedImage(
-				filteredImage, "TEXT");
-		g.drawImage(filteredWithTextImage, 500, 500, null);
+	private void overlayImages(BufferedImage foregroundImage, Graphics g, int posX, int posY) {
+		g.drawImage(foregroundImage, posX, posY, null);
 	}
-*/
+	
 	/**
 	 * Converts a Image object into a BufferedImage object
 	 * 
 	 * @param im
 	 * @param width
 	 * @param heigth
+	 * 
 	 * @return a BufferedImage from a Image parameter
 	 */
 	private BufferedImage imageToBufferedImage(Image im, int width, int height) {
