@@ -35,7 +35,16 @@ public class MyJFrame extends JFrame {
 	private Image image;
 	private ImageIcon imageIcon;
 
-	public MyJFrame(boolean fullscreen) {
+	
+	/**
+	 * Constructor. It creates a JFrame with an Image on it taking into
+	 * account the fullscreen and visible parameters.
+	 * 
+	 * @param fullscreen
+	 * @param visible
+	 * @throws IOException 
+	 */
+	public MyJFrame(boolean fullscreen, boolean visible) {
 		super("@Test");
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -47,7 +56,13 @@ public class MyJFrame extends JFrame {
 			setBounds(0, 0, screenSize.width, screenSize.height);
 		}
 
-		overlayImages();
+//		try {
+//			drawBackgroundImage(ImageIO.read(new File(BACKGROUND_IMAGE)));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		
+//		overlayImages();
 
 		image = Toolkit.getDefaultToolkit().getImage(RESULT);
 //		image = resizeImage(image, new Dimension(300,
@@ -56,10 +71,29 @@ public class MyJFrame extends JFrame {
 
 		JLabel label = new JLabel("");
 		label.setIcon(imageIcon);
-
+//
 		getContentPane().add(label, BorderLayout.CENTER);
 
-		this.setVisible(true);
+		this.setVisible(visible);
+	}
+
+	/**
+	 * Given a BufferdImage this method draws it over this JFrame and
+	 * generates a result.png file
+	 * 
+	 * @param backgroundImage
+	 * @throws IOException
+	 */
+	public void drawBackgroundImage(BufferedImage backgroundImage) throws IOException {
+		try {
+			// paint both images, preserving the alpha channels
+			Graphics graphics = backgroundImage.getGraphics();
+			graphics.drawImage(backgroundImage, 0, 0, null);
+
+			ImageIO.write(backgroundImage, FORMAT_PNG, new File(RESULT));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -143,7 +177,7 @@ public class MyJFrame extends JFrame {
 			graphics.drawImage(backgroundImage, 0, 0, null);
 
 			overlayImages(foregroundImage, graphics);
-			//
+			
 
 			ImageIO.write(combined, FORMAT_PNG, new File(RESULT));
 		} catch (IOException e) {
